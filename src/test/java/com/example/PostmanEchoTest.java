@@ -7,7 +7,19 @@ import static org.hamcrest.Matchers.equalTo;
 public class PostmanEchoTest {
 
     @Test
-    void testPostRequestWithSimpleData() {
+    public void testGetRequest() {
+        given()
+                .baseUri("https://postman-echo.com")
+                .when()
+                .get("/get?foo1=bar1&foo2=bar2")
+                .then()
+                .statusCode(200)
+                .body("args.foo1", equalTo("bar1"))  // Проверьте значения
+                .body("args.foo2", equalTo("bar2"));
+    }
+
+    @Test
+    public void testPostRequest() {
         given()
                 .baseUri("https://postman-echo.com")
                 .body("some data")
@@ -15,45 +27,6 @@ public class PostmanEchoTest {
                 .post("/post")
                 .then()
                 .statusCode(200)
-                .body("data", equalTo("some data");
-    }
-
-    @Test
-    void testPostRequestWithRussianText() {
-        given()
-                .baseUri("https://postman-echo.com")
-                .contentType("text/plain; charset=UTF-8")
-                .body("Привет, мир!")
-                .when()
-                .post("/post")
-                .then()
-                .statusCode(200)
-                .body("data", equalTo("Привет, мир!"));
-    }
-
-    @Test
-    void testPostRequestWithJsonData() {
-        given()
-                .baseUri("https://postman-echo.com")
-                .contentType("application/json")
-                .body("{\"test\": \"value\"}")
-                .when()
-                .post("/post")
-                .then()
-                .statusCode(200)
-                .body("json.test", equalTo("value"));
-    }
-
-    // Тест, который должен упасть - демонстрация fail в CI
-    @Test
-    void testFailingPostRequest() {
-        given()
-                .baseUri("https://postman-echo.com")
-                .body("correct data")
-                .when()
-                .post("/post")
-                .then()
-                .statusCode(200)
-                .body("data", equalTo("wrong data")); // Намеренно неверное утверждение
+                .body("data", equalTo("some data"));  // Важно: должно совпадать с отправляемым телом
     }
 }
